@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Unified.to integrations directory (dev)</title>
+    </head>
+    <body style="padding: 40px">
+        <h1>Our Integrations</h1>
+        <div id="unified_widget"></div>
+        <script type="module">
+            import { renderDirectory } from '/src/index.ts';
+
+            const query = new URLSearchParams(location.search);
+            renderDirectory('unified_widget', {
+                workspace_id: query.get('wid') || '5e8ba11d3fb8ff95c90b7332',
+                dc: query.get('dc') || 'us',
+                link_url: 'https://unified.to/integrations/{type}',
+            });
+        </script>
+    </body>
+</html>
