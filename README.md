@@ -4,7 +4,7 @@
 
 # Unified.to's Integrations Directory JavaScript Component
 
-Embeds Unified.to's integrations directory in any web page. Each integration links to its authorization flow (or to your own URL with `link_url`).
+Embeds Unified.to's integrations directory in any web page, with category tabs and a search box. Each integration links to its authorization flow (or to your own URL with `link_url`).
 
 The script-tag build of this package is what `https://api.unified.to/docs/unified.js` serves.
 
@@ -38,6 +38,7 @@ The script renders the directory into the element with ID `did` when the page lo
 | `style=false`  | Do not load Unified.to's stylesheet                                                                         |
 | `nocategories` | Do not display category badges for each integration                                                         |
 | `notabs`       | Do not display the category tabs                                                                            |
+| `nosearch`     | Do not display the search box                                                                               |
 
 ## Package manager
 
@@ -71,6 +72,7 @@ await renderDirectory('unified_widget', {
     nostyle?: boolean;             // do not load Unified.to's stylesheet
     nocategories?: boolean;        // do not display category badges for each integration
     notabs?: boolean;              // do not display the category tabs
+    nosearch?: boolean;            // do not display the search box
     lang?: string;
     dc?: 'us' | 'eu' | 'au';       // data center/region; defaults to 'us'
     link_url?: string;             // link to this URL instead of the authorization flow; '{type}' is replaced

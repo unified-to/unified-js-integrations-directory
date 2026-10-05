@@ -19,6 +19,7 @@ export interface IDirectoryOptions {
     nostyle?: boolean; // Do not load Unified.to's stylesheet
     nocategories?: boolean; // Do not display category badges for each integration
     notabs?: boolean; // Do not display the category tabs
+    nosearch?: boolean; // Do not display the search box
     lang?: string;
     dc?: TDataCenter; // Data center/region; defaults to 'us'
     link_url?: string; // Link each integration to this URL instead of the authorization URL; '{type}' is replaced with the integration type
@@ -156,17 +157,56 @@ export function renderDirectory(target: HTMLElement | string, options: IDirector
                 '' +
                 `<div class="unified${themeClass}">` +
                 (!notabs ? '<div class="unified_menu">' + catsHtml + '</div>' : '') +
+                (!options.nosearch
+                    ? '<div style="margin-bottom: 16px"><input type="search" class="unified_search" placeholder="Search..." style="width: 100%" /></div>'
+                    : '') +
                 '<div class="unified_vendors">' +
                 vendorsHtml +
+                '<div class="unified_empty" style="display: none">No integrations available</div>' +
                 '</div>' +
                 '</div>';
 
-            onclick(element, 'unified_button_all', () => selectCategory(element));
+            const integrations = json || [];
+            const vendors = element.getElementsByClassName('unified_vendor'); // in the same order as integrations
+            const empty = element.getElementsByClassName('unified_empty')[0] as HTMLElement;
+            let category: string | undefined;
+            let search = '';
+
+            const filter = () => {
+                let visible = 0;
+                integrations.forEach((v, i) => {
+                    const show =
+                        (!category || (v.categories || []).indexOf(category as TIntegrationCategory) > -1) &&
+                        (!search || v.name.toLowerCase().indexOf(search) > -1 || v.type.toLowerCase().indexOf(search) > -1);
+                    (vendors[i] as HTMLElement).style.display = show ? '' : 'none';
+                    if (show) {
+                        visible++;
+                    }
+                });
+                empty.style.display = visible ? 'none' : '';
+
+                active(element.getElementsByClassName('unified_button'), false);
+                active(element.getElementsByClassName(category ? 'unified_button_' + category : 'unified_button_all'), true);
+            };
+
+            onclick(element, 'unified_button_all', () => {
+                category = undefined;
+                filter();
+            });
             cats.forEach(function (c) {
-                onclick(element, `unified_button_${c}`, () => selectCategory(element, c));
+                onclick(element, `unified_button_${c}`, () => {
+                    category = c;
+                    filter();
+                });
             });
 
-            selectCategory(element);
+            const searchInput = element.getElementsByClassName('unified_search')[0] as HTMLInputElement | undefined;
+            searchInput?.addEventListener('input', () => {
+                search = searchInput.value.toLowerCase();
+                filter();
+            });
+
+            filter();
             resolve();
         });
     });
@@ -182,31 +222,12 @@ function onclick(element: HTMLElement, className: string, fn: () => void) {
     }
 }
 
-function selectCategory(element: HTMLElement, cat?: string) {
-    if (!cat) {
-        show(element.getElementsByClassName('unified_vendor'), true);
-        active(element.getElementsByClassName('unified_button'), false);
-        active(element.getElementsByClassName('unified_button_all'), true);
-    } else {
-        show(element.getElementsByClassName('unified_vendor'));
-        show(element.getElementsByClassName('unified_' + cat), true);
-        active(element.getElementsByClassName('unified_button'), false);
-        active(element.getElementsByClassName('unified_button_' + cat), true);
-    }
-
-    function show(l: HTMLCollectionOf<Element>, bool?: boolean) {
-        for (let i = 0; i < l.length; i++) {
-            (l[i] as HTMLElement).style.display = bool ? '' : 'none';
-        }
-    }
-
-    function active(l: HTMLCollectionOf<Element>, bool?: boolean) {
-        for (let i = 0; i < l.length; i++) {
-            const el = l[i];
-            el.className = el.className.replace('active', '').trim();
-            if (bool) {
-                el.className += ' active';
-            }
+function active(l: HTMLCollectionOf<Element>, bool?: boolean) {
+    for (let i = 0; i < l.length; i++) {
+        const el = l[i];
+        el.className = el.className.replace('active', '').trim();
+        if (bool) {
+            el.className += ' active';
         }
     }
 }

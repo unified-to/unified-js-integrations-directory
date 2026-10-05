@@ -24,6 +24,7 @@ window.onload = function (ev: Event) {
             nostyle: getBool('style') === false,
             nocategories: getBool('nocategories'),
             notabs: getBool('notabs'),
+            nosearch: getBool('nosearch'),
             lang: getString('lang'),
             dc: getString('dc') as TDataCenter,
             link_url: getString('link_url'),
