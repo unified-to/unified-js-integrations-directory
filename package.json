@@ -1,0 +1,46 @@
+{
+    "name": "@unified-api/js-directory",
+    "version": "1.0.0",
+    "description": "Embeddable JavaScript component for Unified.to's Integrations Directory",
+    "author": "Unified API Inc.",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/unified-to/unified-js-integrations-directory/issues"
+    },
+    "homepage": "https://github.com/unified-to/unified-js-integrations-directory#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/unified-to/unified-js-integrations-directory.git"
+    },
+    "keywords": [
+        "unifiedapi",
+        "integrations",
+        "directory"
+    ],
+    "type": "module",
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/UnifiedAPI-JS-Directory.cjs",
+    "module": "./dist/UnifiedAPI-JS-Directory.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/UnifiedAPI-JS-Directory.js",
+            "require": "./dist/UnifiedAPI-JS-Directory.cjs"
+        },
+        "./unified.js": "./dist/unified.js",
+        "./package.json": "./package.json"
+    },
+    "scripts": {
+        "build": "rm -rf dist && tsc --noEmit && vite build && vite build --config vite.embed.config.ts && tsc -p tsconfig.build.json",
+        "dev": "vite",
+        "type-check": "tsc --noEmit",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "typescript": "^5.9.3",
+        "vite": "^7.3.6"
+    }
+}
