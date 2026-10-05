@@ -34,6 +34,7 @@ The script renders the directory into the element with ID `did` when the page lo
 | `lang`         | Language for the authorization pages                                                                        |
 | `dc`           | Data center/region: `us` (default), `eu`, `au`                                                              |
 | `link_url`     | Link each integration here instead of to its authorization flow; `{type}` is replaced by the integration type |
+| `theme`        | `dark` or `light`. Omit to auto-detect: the page's `?theme=` parameter, then the browser's color scheme         |
 | `style=false`  | Do not load Unified.to's stylesheet                                                                         |
 | `nocategories` | Do not display category badges for each integration                                                         |
 | `notabs`       | Do not display the category tabs                                                                            |
@@ -73,6 +74,7 @@ await renderDirectory('unified_widget', {
     lang?: string;
     dc?: 'us' | 'eu' | 'au';       // data center/region; defaults to 'us'
     link_url?: string;             // link to this URL instead of the authorization flow; '{type}' is replaced
+    theme?: 'dark' | 'light';      // omit to auto-detect (the page's ?theme= parameter, then the browser's color scheme)
 }
 ```
 

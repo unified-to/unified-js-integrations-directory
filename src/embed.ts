@@ -27,6 +27,7 @@ window.onload = function (ev: Event) {
             lang: getString('lang'),
             dc: getString('dc') as TDataCenter,
             link_url: getString('link_url'),
+            theme: getString('theme'),
         });
     }
 

@@ -5,6 +5,7 @@ import { HtmlClass } from './html';
 import { API_URLS, TDataCenter } from './config';
 
 type TIntegrationCategoryType = Exclude<TIntegrationCategory, 'metadata' | 'auth' | 'passthrough' | 'scim'>;
+export type TTheme = 'dark' | 'light' | 'auto';
 
 export interface IDirectoryOptions {
     workspace_id: string; // your workspace_id found at https://app.unified.to/settings/api
@@ -21,6 +22,7 @@ export interface IDirectoryOptions {
     lang?: string;
     dc?: TDataCenter; // Data center/region; defaults to 'us'
     link_url?: string; // Link each integration to this URL instead of the authorization URL; '{type}' is replaced with the integration type
+    theme?: TTheme | string; // 'dark', 'light', or omit to auto-detect (also reads ?theme= from the page URL)
 }
 
 const MAP: { [path in TIntegrationCategory]?: string } = CATEGORIES.reduce(
@@ -30,6 +32,17 @@ const MAP: { [path in TIntegrationCategory]?: string } = CATEGORIES.reduce(
     },
     {} as { [path in TIntegrationCategory]?: string }
 );
+
+function normalizeTheme(value?: string | null): TTheme {
+    const normalized = (value || '').toLowerCase().trim();
+    if (normalized.startsWith('dark')) {
+        return 'dark';
+    }
+    if (normalized.startsWith('light')) {
+        return 'light';
+    }
+    return 'auto';
+}
 
 function toCsv(value?: string[] | string) {
     return Array.isArray(value) ? value.join(',') : value;
@@ -52,6 +65,8 @@ export function renderDirectory(target: HTMLElement | string, options: IDirector
     const scopes = toCsv(options.scopes);
     const dc: TDataCenter = options.dc && API_URLS[options.dc] ? options.dc : 'us';
     const apiUrl = API_URLS[dc];
+    const theme = normalizeTheme(options.theme || new URLSearchParams(location.search).get('theme'));
+    const themeClass = theme === 'dark' ? ' dark-theme' : theme === 'light' ? ' unified-theme-light' : '';
     let notabs = options.notabs;
 
     const url = `${apiUrl}/unified/integration/workspace/${workspaceId}?summary=1${categories ? '&categories=' + categories : ''}${
@@ -112,6 +127,7 @@ export function renderDirectory(target: HTMLElement | string, options: IDirector
                           scopes,
                           env,
                           lang: options.lang,
+                          theme: theme === 'auto' ? undefined : theme,
                       });
 
                 const _cats = !options.nocategories
@@ -138,7 +154,7 @@ export function renderDirectory(target: HTMLElement | string, options: IDirector
 
             element.innerHTML =
                 '' +
-                '<div class="unified">' +
+                `<div class="unified${themeClass}">` +
                 (!notabs ? '<div class="unified_menu">' + catsHtml + '</div>' : '') +
                 '<div class="unified_vendors">' +
                 vendorsHtml +
