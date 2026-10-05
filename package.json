@@ -1,6 +1,6 @@
 {
     "name": "@unified-api/js-directory",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "Embeddable JavaScript component for Unified.to's Integrations Directory",
     "author": "Unified API Inc.",
     "license": "ISC",
