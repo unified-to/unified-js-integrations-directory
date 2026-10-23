@@ -25,10 +25,10 @@ The script renders the directory into the element with ID `did` when the page lo
 | `wid`          | **Required.** Your workspace ID, found at https://app.unified.to/settings/api                               |
 | `did`          | **Required.** The ID of the element to render the directory into                                            |
 | `env`          | Environment (e.g. `Sandbox`). Defaults to `Production`                                                      |
-| `cat`          | Comma-separated integration categories to show (e.g. `crm,ats`)                                             |
+| `cat`          | Comma-separated integration categories to show (e.g. `crm,ats`). Defaults to the categories of `scopes`     |
 | `uid`          | Your ID for the account/user that is signed into your application (`external_xref`)                         |
 | `state`        | A state string that will be sent back to your success URL                                                   |
-| `scopes`       | Comma-separated Unified.to permission scopes to request from OAuth2-based integrations                      |
+| `scopes`       | Comma-separated permission scopes (e.g. `crm_event_read`). Defaults to each integration's enabled scopes    |
 | `surl`         | Success redirect URL. The connection ID (`id=`) and `state` are appended. Defaults to the current page       |
 | `furl`         | Failure redirect URL. An `error` variable is appended. Defaults to the current page                         |
 | `lang`         | Language for the authorization pages                                                                        |
@@ -63,10 +63,10 @@ await renderDirectory('unified_widget', {
 {
     workspace_id: string;          // your workspace_id found at https://app.unified.to/settings/api
     environment?: string;          // defaults to 'Production'
-    categories?: string[];         // limit the list of integrations to these categories (crm, ats, hris, ...)
+    categories?: string[];         // limit the list to these categories (crm, ats, ...); defaults to the categories of `scopes`
     external_xref?: string;        // your ID for the account/user that is signed into your application
     state?: string;                // a state string that will be sent back to your success URL
-    scopes?: string[];             // Unified.to permission scopes to request from OAuth2-based integrations
+    scopes?: string[];             // permission scopes to request (e.g. crm_event_read); defaults to each integration's enabled permissions
     success_redirect?: string;     // defaults to the current page
     failure_redirect?: string;     // defaults to the current page
     nostyle?: boolean;             // do not load Unified.to's stylesheet
