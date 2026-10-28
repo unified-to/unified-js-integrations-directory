@@ -10,10 +10,10 @@ export type TTheme = 'dark' | 'light' | 'auto';
 export interface IDirectoryOptions {
     workspace_id: string; // your workspace_id found at https://app.unified.to/settings/api
     environment?: string; // Defaults to 'Production'
-    categories?: string[] | string; // Limit the list of integrations to these categories (crm, ats, hris, ...)
+    categories?: string[] | string; // Limit the list of integrations to these categories (crm, ats, hris, ...); defaults to the categories of `scopes`
     external_xref?: string; // Your ID for the account/user that is signed into your application
     state?: string; // A state string that will be sent back to your success URL
-    scopes?: string[] | string; // Unified.to permission scopes to request from OAUTH2-based integrations
+    scopes?: string[] | string; // Unified.to permission scopes to request (e.g. crm_event_read); defaults to the permissions enabled on each integration in your workspace
     success_redirect?: string; // Defaults to the current page
     failure_redirect?: string; // Defaults to the current page
     nostyle?: boolean; // Do not load Unified.to's stylesheet
@@ -49,6 +49,18 @@ function toCsv(value?: string[] | string) {
     return Array.isArray(value) ? value.join(',') : value;
 }
 
+/** The categories of permission scopes (`crm_event_read` is `crm`), so the directory only lists integrations that can grant them. */
+function categoriesFromScopes(scopes?: string) {
+    const cats: string[] = [];
+    (scopes || '').split(',').forEach(function (scope) {
+        const c = scope.trim().split('_')[0] as TIntegrationCategory;
+        if (c && MAP[c] && cats.indexOf(c) === -1) {
+            cats.push(c);
+        }
+    });
+    return cats.join(',');
+}
+
 /**
  * Renders the Unified.to integrations directory into `target` (an element or element ID).
  * Resolves once the directory has been rendered.
@@ -62,8 +74,8 @@ export function renderDirectory(target: HTMLElement | string, options: IDirector
 
     const workspaceId = options.workspace_id;
     const env = options.environment || 'Production';
-    const categories = toCsv(options.categories);
     const scopes = toCsv(options.scopes);
+    const categories = toCsv(options.categories) || categoriesFromScopes(scopes);
     const dc: TDataCenter = options.dc && API_URLS[options.dc] ? options.dc : 'us';
     const apiUrl = API_URLS[dc];
     const theme = normalizeTheme(options.theme || new URLSearchParams(location.search).get('theme'));
